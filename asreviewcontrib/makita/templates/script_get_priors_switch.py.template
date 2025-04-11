@@ -1,0 +1,64 @@
+"""Script to extract priors for switching models.
+
+Example
+-------
+
+> python scripts/get_priors_switch.py
+
+or
+
+> --prior_idx get_priors_switch(stopping_rule)
+
+Authors
+-------
+- Hofstee, Laura
+- Teijema, Jelle
+"""
+
+# version {{ version }}
+
+from pathlib import Path 
+from asreview import open_state 
+
+def get_record_ids_until_irrelevant_streak(filename, stopping_rule): 
+	file = Path(filename) 
+	
+	with open_state(file) as state: 
+		results = state.get_results_table() 
+		
+	labels = results.label.to_list() 
+	accumulating_irrelevant_labels = [] 
+	count = 0 
+	seen_label = False 
+	
+	for val in labels: 
+		if val == 0: 
+			if seen_label: 
+				count += 1 
+			else: 
+				count = -1 # don't count initial 0s 
+		else: 
+			seen_label = True 
+			count = 0 
+		accumulating_irrelevant_labels.append(count) 
+		
+	if stopping_rule not in accumulating_irrelevant_labels: 
+		raise ValueError("Stopping rule was never triggered in the label sequence.") 
+		
+	index_stopping_triggered
+accumulating_irrelevant_labels.index(stopping_rule) 
+	output = list(results.record_id[:index_stopping_triggered]) 
+	
+	return output 
+
+get_record_ids_until_irrelevant_streak("output.asreview", 10)
+
+
+
+import matplotlib.pyplot as plt 
+
+plt.plot(accumulating_irrelevant_labels)
+plt.axhline(y=0, color='black') 
+plt.axhline(y=stopping_rule, color='r', linestyle='--', xmax=accumulating_irrelevant_labels.index(stopping_rule)/len(labels)) 
+plt.axvline(x=accumulating_irrelevant_labels.index(stopping_rule), color='g', linestyle='--') 
+plt.xlabel("iteration")

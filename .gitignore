@@ -113,3 +113,5 @@ dmypy.json
 # End of https://www.gitignore.io/api/python
 
 asreviewcontrib/makita/_version.py
+
+.DS_Store
